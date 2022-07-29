@@ -1,0 +1,1 @@
+SQL querying - Azure Data Solution is much nicer than SSMS
