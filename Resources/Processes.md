@@ -1,0 +1,1 @@
+Diataxis - Structuring Documentation for the reader
