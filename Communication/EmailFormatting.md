@@ -18,7 +18,7 @@ Many times non-technical staff may send an email that looks like the following. 
 ![NonTecnical](NonTechnicalEmail.png)
 
 Many times technical staff will write an email that looks like the following. It is packed with all the details of the issue incase they are needed in the future. The downside is that the email is basically unreadable from non-technical staff(BAs, Managers). It is difficult to determine if the issue is resolved or what impact the business will see without reading the email.
-![Technical](NonTechnicalEmail.png)
+![Technical](TechnicalEmail.png)
 
 ## Proposed Solution
 A real instance of this email normally results in the "short" section being a long paragraph and the "long" section is a full page of text. The example is only to highlight the structure.
