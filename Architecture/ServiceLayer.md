@@ -20,6 +20,6 @@ A description of the components that go into a service layer and what I consider
   Can be either a WebApi(.net, node, etc) for persistent execution or serverless (azure functions, aws lambda, etc) for intermittent executions. Azure Functions can be run from on-prem K8s instances using KEDA.
 ## Persistence
   Should contain the state of the unit of work/domain(ie. contains most of the information about orders, or about products, etc )
-  Can be any form of persistance but for most business functionality you are likely using structured data and a SQL server. Document Dbs or search engines are also possible but come with their own pro's and con's that I'm not getting into here.
+  Can be any form of persistance but for most business functionality you are likely using structured data and a SQL server. Document Dbs are also possible but come with their own pro's and con's that I'm not getting into here.
 ## Logs
   Centralized Log storage that contains all errors or informational records that were generated from the suite of applications while executing. A spike in errors can indicate a service issue just as much as a slew of HTTP 5xx can.
