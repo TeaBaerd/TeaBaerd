@@ -8,9 +8,9 @@ When writing that next email, here are a couple tips to make sure each group is 
 We can create a long and detailed workup for any issues that are encountered but they provide no value if they aren't consumed.
 
 How much of your email is read:
-An executive(Yellow) - An executive may only read the title of your email. If they read more they are doing so from the top of the email and will only get one or two sentences in before again determining if the rest of the email requires their attention.
-A busy Manager(Green) - Someone who is reading for information will digest the whole first paragraph and may skim the rest of the article to understand the email at a high level.
-A BA or Developer - The entire email but will understand terms and technical descriptions differently
+- An executive(Yellow) - An executive may only read the title of your email. If they read more they are doing so from the top of the email and will only get one or two sentences in before again determining if the rest of the email requires their attention.
+- A busy Manager(Green) - Someone who is reading for information will digest the whole first paragraph and may skim the rest of the article to understand the email at a high level.
+- A BA or Developer - The entire email but will understand terms and technical descriptions differently
 ![LongEmail](LongEmail.png)
 
 ## Levels of granularity
