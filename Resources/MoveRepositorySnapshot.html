@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+
+
+<html id="magnolia" lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="fb:pages" content="115407078489594" />
+<meta name="description" content="Learn how to move a Git repository from one remote server to another. This tutorial also teaches you how to choose which branches and tags to include.">
+<meta name="author" content="Atlassian">
+<link rel="canonical" href="https://www.atlassian.com/git/tutorials/git-move-repository"/>
+<title>How to move a git repository with history | Atlassian Git Tutorial</title>
+<style>body { display: none; }</style>
+<link href="https://wac-cdn.atlassian.com" rel="preconnect">
+<script type="text/javascript" src="https://metal.prod.atl-paas.net/1.24.0/metal-head.min.js"></script>
+<script type="text/javascript" src="https://wac-cdn.atlassian.com/static/master/2492/assets/build/js/head.js?cdnVersion=578"></script>
+<link rel="alternate" href="https://www.atlassian.com/git/tutorials/git-move-repository" hreflang="x-default" />
+<link rel="alternate" href="https://www.atlassian.com/git/tutorials/git-move-repository" hreflang="en" />
+<link rel="apple-touch-icon-precomposed" sizes="57x57" href="https://wac-cdn.atlassian.com/assets/img/favicons/gitguide/apple-touch-icon-57x57.png" />
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="https://wac-cdn.atlassian.com/assets/img/favicons/gitguide/apple-touch-icon-114x114.png" />
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="https://wac-cdn.atlassian.com/assets/img/favicons/gitguide/apple-touch-icon-72x72.png" />
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://wac-cdn.atlassian.com/assets/img/favicons/gitguide/apple-touch-icon-144x144.png" />
+<link rel="apple-touch-icon-precomposed" sizes="120x120" href="https://wac-cdn.atlassian.com/assets/img/favicons/gitguide/apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon-precomposed" sizes="152x152" href="https://wac-cdn.atlassian.com/assets/img/favicons/gitguide/apple-touch-icon-152x152.png" />
+<link rel="icon" type="image/png" href="https://wac-cdn.atlassian.com/assets/img/favicons/gitguide/favicon.png" sizes="32x32" />
+<link rel="mask-icon" href="https://wac-cdn.atlassian.com/assets/img/favicons/gitguide/safari-pinned-tab.svg" color="#59afe1">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="https://wac-cdn.atlassian.com/assets/img/favicons/gitguide/mstile-144x144.png" />
+<meta name="theme-color" content="#205081">
+<meta property="og:title" content="How to move a git repository with history | Atlassian Git Tutorial" />
+<meta property="og:description" content="Learn how to move a Git repository from one remote server to another. This tutorial also teaches you how to choose which branches and tags to include." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.atlassian.com/git/tutorials/git-move-repository" />
+<meta property="og:site_name" content="Atlassian" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@Atlassian" />
+<script src="https://wac-cdn.atlassian.com/static/master/2492/assets/build/js/jquery.js?cdnVersion=578"></script>
+<script type="text/javascript">
+window.featureFlags = "jiraTemplateGallery=showJiraTemplateGallery&amp;aisAvailableProducts=enableAisAvailableProducts&amp;jpdBundle=enableJpdBundle&amp;devopsGoogleSignup=enableDevopsGoogleSignup&amp;siteSelectionListBlockedGeoIP=enableSiteSelectionListBlockedGeoIP&amp;control=im_itsm_microsite_control&amp;removeStatuspageOpsgenieFilter=enableRemoveStatuspageOpsgenieFilter".split('&amp;')
+.reduce((flags, flagStr) => {
+const [flagKey, flagValue] = flagStr.split('=');
+return { ...flags, [flagKey]: flagValue };
+}, {})
+</script>
+<script type="text/javascript">
+window.cmsPageVariant = window.cmsPageVariant ? window.cmsPageVariant : window.featureFlags?.cmsVariant;
+</script>
+<script type="text/javascript">
+var LOCALIZED_PRICING_CONTENTFUL_SPACE = "3s3v3nq72la0";
+var LOCALIZED_PRICING_CONTENTFUL_ENVIRONMENT = "master";
+var LOCALIZED_PRICING_CONTENTFUL_ACCESS_TOKEN = "b9c3ea8d9c664146e9c7dd136a1d40ff8415715c3ef8ee222536f36fb2056613";
+var LOCALIZED_CCP_PRICING_CONTENTFUL_ENVIRONMENT = "ccp_dev";
+var LOCALIZED_CCP_PRICING_CONTENTFUL_ACCESS_TOKEN = "3SWtzulQjrRd4OdxZm8zhe_ohy5J2-Jafj0Zkr5grS4";
+var LOCALIZED_PRICING_USE_GEO_CURRENCY = true;
+</script>
+</head>
+<body id="git-move-repository" class="wac git tutorials git-move-repository">
+<div id="header">
+<div class="tutorial-sidebar is-active">
+<div class="_bumper"></div>
+<div class="_wrap">
+<ol>
+<div class="_group">
+<a href="/git/tutorials/learn-git-with-bitbucket-cloud" class="cms-link cms-link--text group-link" >Learn Git</a>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/learn-git-with-bitbucket-cloud" class="cms-link cms-link--text tutorial-link" >Learn Git with Bitbucket Cloud</a>
+<div aria-hidden="true" class="_toc">
+<a href="/git/tutorials/learn-git-with-bitbucket-cloud#create-the-repository" class="cms-link cms-link--text section-link" >Create a Git repository</a>
+<a href="/git/tutorials/learn-git-with-bitbucket-cloud#copy-and-add-files" class="cms-link cms-link--text section-link" >Copy your Git repository and add files</a>
+<a href="/git/tutorials/learn-git-with-bitbucket-cloud#pull-changes" class="cms-link cms-link--text section-link" >Pull changes from your Git repository on Bitbucket Cloud</a>
+<a href="/git/tutorials/learn-git-with-bitbucket-cloud#git-branch-to-merge" class="cms-link cms-link--text section-link" >Use a Git branch to merge a file</a>
+</div>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/learn-about-code-review-in-bitbucket-cloud" class="cms-link cms-link--text tutorial-link" >Learn about code review in Bitbucket Cloud</a>
+<div aria-hidden="true" class="_toc">
+<a href="/git/tutorials/learn-about-code-review-in-bitbucket-cloud#create-repository" class="cms-link cms-link--text section-link" >Create a repository</a>
+<a href="/git/tutorials/learn-about-code-review-in-bitbucket-cloud#clone-branch" class="cms-link cms-link--text section-link" >Clone and make a change on a new branch</a>
+<a href="/git/tutorials/learn-about-code-review-in-bitbucket-cloud#im-using-git" class="cms-link cms-link--text section-link" >If you're using command line</a>
+<a href="/git/tutorials/learn-about-code-review-in-bitbucket-cloud#im-using-sourcetree" class="cms-link cms-link--text section-link" >If you're using Sourcetree</a>
+<a href="/git/tutorials/learn-about-code-review-in-bitbucket-cloud#create-a-pull-request-to-merge-your-change" class="cms-link cms-link--text section-link" >Create a pull request to merge your change</a>
+</div>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/learn-branching-with-bitbucket-cloud" class="cms-link cms-link--text tutorial-link" >Learn branching in Bitbucket Cloud</a>
+<div aria-hidden="true" class="_toc">
+<a href="/git/tutorials/learn-branching-with-bitbucket-cloud#create-the-repository" class="cms-link cms-link--text section-link" >Get set up</a>
+<a href="/git/tutorials/learn-branching-with-bitbucket-cloud#review-branching-workflow" class="cms-link cms-link--text section-link" >Review branching workflow</a>
+</div>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/learn-undoing-changes-with-bitbucket" class="cms-link cms-link--text tutorial-link" >Learn undoing changes with Bitbucket Cloud</a>
+<div aria-hidden="true" class="_toc">
+<a href="/git/tutorials/learn-undoing-changes-with-bitbucket#git-status" class="cms-link cms-link--text section-link" >git status</a>
+<a href="/git/tutorials/learn-undoing-changes-with-bitbucket#git-log" class="cms-link cms-link--text section-link" >git log</a>
+<a href="/git/tutorials/learn-undoing-changes-with-bitbucket#git-reset" class="cms-link cms-link--text section-link" >git reset</a>
+<a href="/git/tutorials/learn-undoing-changes-with-bitbucket#git-revert" class="cms-link cms-link--text section-link" >git revert</a>
+</div>
+</div>
+</div>
+<div class="_group">
+<a href="/git/tutorials/what-is-version-control" class="cms-link cms-link--text group-link" >Beginner</a>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/what-is-version-control" class="cms-link cms-link--text tutorial-link" >What is version control</a>
+<div aria-hidden="true" class="_toc">
+<a href="/git/tutorials/what-is-version-control#benefits-of-version-control" class="cms-link cms-link--text section-link" >Benefits of version control</a>
+</div>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/source-code-management" class="cms-link cms-link--text tutorial-link" >Source Code Management</a>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/what-is-git" class="cms-link cms-link--text tutorial-link" >What is Git</a>
+<div aria-hidden="true" class="_toc">
+<a href="/git/tutorials/what-is-git#performance" class="cms-link cms-link--text section-link" >Performance</a>
+<a href="/git/tutorials/what-is-git#security" class="cms-link cms-link--text section-link" >Security</a>
+<a href="/git/tutorials/what-is-git#flexibility" class="cms-link cms-link--text section-link" >Flexibility</a>
+<a href="/git/tutorials/what-is-git#version-control-with-git" class="cms-link cms-link--text section-link" >Version control with Git</a>
+</div>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/why-git" class="cms-link cms-link--text tutorial-link" >Why Git for your Organization</a>
+<div aria-hidden="true" class="_toc">
+<a href="/git/tutorials/why-git#git-for-developers" class="cms-link cms-link--text section-link" >Git for developers</a>
+<a href="/git/tutorials/why-git#git-for-marketing" class="cms-link cms-link--text section-link" >Git for marketing</a>
+<a href="/git/tutorials/why-git#git-for-product-management" class="cms-link cms-link--text section-link" >Git for product management</a>
+<a href="/git/tutorials/why-git#git-for-designers" class="cms-link cms-link--text section-link" >Git for designers</a>
+<a href="/git/tutorials/why-git#git-for-customer-support" class="cms-link cms-link--text section-link" >Git for customer support</a>
+<a href="/git/tutorials/why-git#git-for-human-resources" class="cms-link cms-link--text section-link" >Git for human resources</a>
+<a href="/git/tutorials/why-git#git-for-anyone-managing-budget" class="cms-link cms-link--text section-link" >Git for anyone managing a budget</a>
+</div>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/install-git" class="cms-link cms-link--text tutorial-link" >Install Git</a>
+<div aria-hidden="true" class="_toc">
+<a href="/git/tutorials/install-git#mac-os-x" class="cms-link cms-link--text section-link" >Install Git on Mac OS X</a>
+<a href="/git/tutorials/install-git#windows" class="cms-link cms-link--text section-link" >Install Git on Windows</a>
+<a href="/git/tutorials/install-git#linux" class="cms-link cms-link--text section-link" >Install Git on Linux</a>
+</div>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/git-ssh" class="cms-link cms-link--text tutorial-link" >Git SSH</a>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/export-git-archive" class="cms-link cms-link--text tutorial-link" >Git archive</a>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/gitops" class="cms-link cms-link--text tutorial-link" >GitOps</a>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/atlassian-git-cheatsheet" class="cms-link cms-link--text tutorial-link" >Git Cheatsheet</a>
+</div>
+</div>
+<div class="_group">
+<a href="/git/tutorials/setting-up-a-repository" class="cms-link cms-link--text group-link" >Getting Started</a>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/setting-up-a-repository" class="cms-link cms-link--text tutorial-link" >Setting up a repository</a>
+<div aria-hidden="true" class="_toc">
+<a href="/git/tutorials/setting-up-a-repository/git-init" class="cms-link cms-link--text section-link" >git init</a>
+<a href="/git/tutorials/setting-up-a-repository/git-clone" class="cms-link cms-link--text section-link" >git clone</a>
+<a href="/git/tutorials/setting-up-a-repository/git-config" class="cms-link cms-link--text section-link" >git config</a>
+<a href="/git/tutorials/git-alias" class="cms-link cms-link--text section-link" >git alias</a>
+</div>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/saving-changes" class="cms-link cms-link--text tutorial-link" >Saving changes</a>
+<div aria-hidden="true" class="_toc">
+<a href="/git/tutorials/saving-changes" class="cms-link cms-link--text section-link" >git add</a>
+<a href="/git/tutorials/saving-changes/git-commit" class="cms-link cms-link--text section-link" >git commit</a>
+<a href="/git/tutorials/saving-changes/git-diff" class="cms-link cms-link--text section-link" >git diff</a>
+<a href="/git/tutorials/saving-changes/git-stash" class="cms-link cms-link--text section-link" >git stash</a>
+<a href="/git/tutorials/saving-changes/gitignore" class="cms-link cms-link--text section-link" >.gitignore</a>
+</div>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/inspecting-a-repository" class="cms-link cms-link--text tutorial-link" >Inspecting a repository</a>
+<div aria-hidden="true" class="_toc">
+<a href="/git/tutorials/inspecting-a-repository" class="cms-link cms-link--text section-link" >git status</a>
+<a href="/git/tutorials/inspecting-a-repository/git-tag" class="cms-link cms-link--text section-link" >git tag</a>
+<a href="/git/tutorials/inspecting-a-repository/git-blame" class="cms-link cms-link--text section-link" >git blame</a>
+</div>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/undoing-changes" class="cms-link cms-link--text tutorial-link" >Undoing changes</a>
+<div aria-hidden="true" class="_toc">
+<a href="/git/tutorials/undoing-changes" class="cms-link cms-link--text section-link" >git checkout</a>
+<a href="/git/tutorials/undoing-changes/git-clean" class="cms-link cms-link--text section-link" >git clean</a>
+<a href="/git/tutorials/undoing-changes/git-revert" class="cms-link cms-link--text section-link" >git revert</a>
+<a href="/git/tutorials/undoing-changes/git-reset" class="cms-link cms-link--text section-link" >git reset</a>
+<a href="/git/tutorials/undoing-changes/git-rm" class="cms-link cms-link--text section-link" >git rm</a>
+</div>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/rewriting-history" class="cms-link cms-link--text tutorial-link" >Rewriting history</a>
+<div aria-hidden="true" class="_toc">
+<a href="/git/tutorials/rewriting-history#git-commit--amend" class="cms-link cms-link--text section-link" >git commit --amend</a>
+<a href="/git/tutorials/rewriting-history/git-rebase" class="cms-link cms-link--text section-link" >git rebase</a>
+<a href="/git/tutorials/rewriting-history#git-rebase-i" class="cms-link cms-link--text section-link" >git rebase -i</a>
+<a href="/git/tutorials/rewriting-history/git-reflog" class="cms-link cms-link--text section-link" >git reflog</a>
+</div>
+</div>
+</div>
+<div class="_group">
+<a href="/git/tutorials/syncing" class="cms-link cms-link--text group-link" >Collaborating</a>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/syncing" class="cms-link cms-link--text tutorial-link" >Syncing</a>
+<div aria-hidden="true" class="_toc">
+<a href="/git/tutorials/syncing" class="cms-link cms-link--text section-link" >git remote</a>
+<a href="/git/tutorials/syncing/git-fetch" class="cms-link cms-link--text section-link" >git fetch</a>
+<a href="/git/tutorials/syncing/git-push" class="cms-link cms-link--text section-link" >git push</a>
+<a href="/git/tutorials/syncing/git-pull" class="cms-link cms-link--text section-link" >git pull</a>
+</div>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/making-a-pull-request" class="cms-link cms-link--text tutorial-link" >Making a Pull Request</a>
+<div aria-hidden="true" class="_toc">
+<a href="/git/tutorials/making-a-pull-request#how-it-works" class="cms-link cms-link--text section-link" >How it works</a>
+<a href="/git/tutorials/making-a-pull-request#example" class="cms-link cms-link--text section-link" >Example</a>
+<a href="/git/tutorials/making-a-pull-request#where-to-go" class="cms-link cms-link--text section-link" >Where to go from here</a>
+</div>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/using-branches" class="cms-link cms-link--text tutorial-link" >Using branches</a>
+<div aria-hidden="true" class="_toc">
+<a href="/git/tutorials/using-branches" class="cms-link cms-link--text section-link" >git branch</a>
+<a href="/git/tutorials/using-branches/git-checkout" class="cms-link cms-link--text section-link" >git checkout</a>
+<a href="/git/tutorials/using-branches/git-merge" class="cms-link cms-link--text section-link" >git merge</a>
+<a href="/git/tutorials/using-branches/merge-conflicts" class="cms-link cms-link--text section-link" >Merge conflicts</a>
+<a href="/git/tutorials/using-branches/merge-strategy" class="cms-link cms-link--text section-link" >Merge strategies</a>
+</div>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/comparing-workflows" class="cms-link cms-link--text tutorial-link" >Comparing workflows</a>
+<div aria-hidden="true" class="_toc">
+<a href="/git/tutorials/comparing-workflows#centralized-workflow" class="cms-link cms-link--text section-link" >Centralized Workflow</a>
+<a href="/git/tutorials/comparing-workflows/feature-branch-workflow" class="cms-link cms-link--text section-link" >Feature Branch Workflow</a>
+<a href="/git/tutorials/comparing-workflows/gitflow-workflow" class="cms-link cms-link--text section-link" >Gitflow Workflow</a>
+<a href="/git/tutorials/comparing-workflows/forking-workflow" class="cms-link cms-link--text section-link" >Forking Workflow</a>
+</div>
+</div>
+</div>
+<div class="_group">
+<a href="/git/tutorials/svn-to-git-prepping-your-team-migration" class="cms-link cms-link--text group-link" >Migrating to Git</a>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/svn-to-git-prepping-your-team-migration" class="cms-link cms-link--text tutorial-link" >SVN to Git - prepping for the migration</a>
+<div aria-hidden="true" class="_toc">
+<a href="/git/tutorials/svn-to-git-prepping-your-team-migration#for-administrators" class="cms-link cms-link--text section-link" >For administrators</a>
+<a href="/git/tutorials/svn-to-git-prepping-your-team-migration#basic-git-commands" class="cms-link cms-link--text section-link" >Basic Git commands</a>
+<a href="/git/tutorials/svn-to-git-prepping-your-team-migration#git-migration-tools" class="cms-link cms-link--text section-link" >Git Migration Tools</a>
+<a href="/git/tutorials/svn-to-git-prepping-your-team-migration#for-developers" class="cms-link cms-link--text section-link" >For developers</a>
+</div>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/migrating-overview" class="cms-link cms-link--text tutorial-link" >Migrate to Git from SVN</a>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/migrating-prepare" class="cms-link cms-link--text tutorial-link" >Prepare</a>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/migrating-convert" class="cms-link cms-link--text tutorial-link" >Convert</a>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/migrating-synchronize" class="cms-link cms-link--text tutorial-link" >Synchronize</a>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/migrating-share" class="cms-link cms-link--text tutorial-link" >Share</a>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/migrating-migrate" class="cms-link cms-link--text tutorial-link" >Migrate</a>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/perforce-git" class="cms-link cms-link--text tutorial-link" >Perforce to Git - why to make the move</a>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/perforce-git-migration" class="cms-link cms-link--text tutorial-link" >Migrating from Perforce to Git</a>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/git-move-repository" class="cms-link cms-link--text tutorial-link" >How to move a Git repository with history</a>
+</div>
+</div>
+<div class="_group">
+<a href="/git/tutorials/advanced-overview" class="cms-link cms-link--text group-link" >Advanced Tips</a>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/advanced-overview" class="cms-link cms-link--text tutorial-link" >Advanced Git Tutorials</a>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/merging-vs-rebasing" class="cms-link cms-link--text tutorial-link" >Merging vs. Rebasing</a>
+<div aria-hidden="true" class="_toc">
+<a href="/git/tutorials/merging-vs-rebasing#conceptual-overview" class="cms-link cms-link--text section-link" >Conceptual Overview</a>
+<a href="/git/tutorials/merging-vs-rebasing#the-golden-rule-of-rebasing" class="cms-link cms-link--text section-link" >The Golden Rule of Rebasing</a>
+<a href="/git/tutorials/merging-vs-rebasing#workflow-walkthrough" class="cms-link cms-link--text section-link" >Workflow Walkthrough</a>
+<a href="/git/tutorials/merging-vs-rebasing#summary" class="cms-link cms-link--text section-link" >Summary</a>
+</div>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/resetting-checking-out-and-reverting" class="cms-link cms-link--text tutorial-link" >Resetting, Checking Out, and Reverting</a>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/git-log" class="cms-link cms-link--text tutorial-link" >Advanced Git log</a>
+<div aria-hidden="true" class="_toc">
+<a href="/git/tutorials/git-log#formatting-log-output" class="cms-link cms-link--text section-link" >Formatting Log Output</a>
+<a href="/git/tutorials/git-log#filtering-the-commit-history" class="cms-link cms-link--text section-link" >Filtering the Commit History</a>
+<a href="/git/tutorials/git-log#summary" class="cms-link cms-link--text section-link" >Summary</a>
+</div>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/git-hooks" class="cms-link cms-link--text tutorial-link" >Git Hooks</a>
+<div aria-hidden="true" class="_toc">
+<a href="/git/tutorials/git-hooks#conceptual-overview" class="cms-link cms-link--text section-link" >Conceptual Overview</a>
+<a href="/git/tutorials/git-hooks#local-hooks" class="cms-link cms-link--text section-link" >Local Hooks</a>
+<a href="/git/tutorials/git-hooks#server-side-hooks" class="cms-link cms-link--text section-link" >Server-side Hooks</a>
+<a href="/git/tutorials/git-hooks#summary" class="cms-link cms-link--text section-link" >Summary</a>
+</div>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/refs-and-the-reflog" class="cms-link cms-link--text tutorial-link" >Refs and the Reflog</a>
+<div aria-hidden="true" class="_toc">
+<a href="/git/tutorials/refs-and-the-reflog#hashes" class="cms-link cms-link--text section-link" >Hashes</a>
+<a href="/git/tutorials/refs-and-the-reflog#refs" class="cms-link cms-link--text section-link" >Refs</a>
+<a href="/git/tutorials/refs-and-the-reflog#packed-refs" class="cms-link cms-link--text section-link" >Packed Refs</a>
+<a href="/git/tutorials/refs-and-the-reflog#special-refs" class="cms-link cms-link--text section-link" >Special Refs</a>
+<a href="/git/tutorials/refs-and-the-reflog#refspecs" class="cms-link cms-link--text section-link" >Refspecs</a>
+<a href="/git/tutorials/refs-and-the-reflog#relative-refs" class="cms-link cms-link--text section-link" >Relative Refs</a>
+<a href="/git/tutorials/refs-and-the-reflog#the-reflog" class="cms-link cms-link--text section-link" >The Reflog</a>
+<a href="/git/tutorials/refs-and-the-reflog#summary" class="cms-link cms-link--text section-link" >Summary</a>
+</div>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/git-submodule" class="cms-link cms-link--text tutorial-link" >Git submodules</a>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/git-subtree" class="cms-link cms-link--text tutorial-link" >Git subtree</a>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/big-repositories" class="cms-link cms-link--text tutorial-link" >Large repositories in Git</a>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/git-lfs" class="cms-link cms-link--text tutorial-link" >Git LFS</a>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/git-gc" class="cms-link cms-link--text tutorial-link" >Git gc</a>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/git-prune" class="cms-link cms-link--text tutorial-link" >Git prune</a>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/git-bash" class="cms-link cms-link--text tutorial-link" >Git Bash</a>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/dotfiles" class="cms-link cms-link--text tutorial-link" >How to store dotfiles</a>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/cherry-pick" class="cms-link cms-link--text tutorial-link" >Git Cherry Pick</a>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/gitk" class="cms-link cms-link--text tutorial-link" >GitK</a>
+</div>
+<div aria-hidden="true" class="_group-wrap">
+<a href="/git/tutorials/git-show" class="cms-link cms-link--text tutorial-link" >Git-show</a>
+</div>
+</div>
+</ol>
+</div>
+</div>
+<div class="hamburger ">
+<div class="_layer -top"></div>
+<div class="_layer -mid"></div>
+<div class="_layer -bottom"></div>
+</div>
+<div class="primary-nav">
+<div class="_wrapper">
+<ul class="_nav-list">
+<div>
+<li>
+<a href="/git" class="cms-link cms-link--text _nav-item -home" >Home</a>
+</li>
+</div>
+<div>
+<li class="tutorials-nav" id="tutorials-nav-mobile">
+<h4 class="_nav-item -tutorials">Tutorials</h4>
+<div class="_sublist"></div>
+</li>
+<li>
+<a href="/git/tutorials" class="cms-link cms-link--text _nav-item -tutorials" >Tutorials</a>
+</li>
+</div>
+<div>
+<li>
+<a href="/git/articles" class="cms-link cms-link--text _nav-item -articles" >Articles</a>
+</li>
+</div>
+<div>
+<li>
+<a href="/git/glossary" class="cms-link cms-link--text _nav-item -glossary" >Glossary</a>
+</li>
+</div>
+</ul>
+</div>
+</div>
+<div class="topbar is-tutorial">
+<div class="_header -is-tutorial">
+<a href="/git/tutorials" class="active">Tutorials</a>
+</div>
+</div>
+<form class="newsletter">
+<input class="is-empty _input" type="email" placeholder="Enter Your Email For Git News">
+<button type="submit" class="_status icon-email-submit">Submit</button>
+</form>
+<a href="#footer" class="button green-hollow secondary newsletter-cta" >Sign up</a>
+<a href="/git/search" class="search-button search-open ">
+<span class="_link icon-search">Search</span>
+</a>
+<a href="/git" class="search-button search-close -in-page hidden">
+<span class="_link icon-search-close -close">Search</span>
+</a>
+</div>
+<div class="page-wrap is-active -gray-bg tutorial-detail">
+<div id="content" class="_content">
+<div class="tutorial-hero">
+<div class="g-column g-12-12 text-center">
+<img src="https://wac-cdn.atlassian.com/dam/jcr:440234c3-f1f9-46f7-9c78-2e8a64d9b776/hero.svg?cdnVersion=578" loading="lazy" alt="Migrate">
+<h1 > How to move a full Git repository
+</h1>
+</div></div>
+<div class="g-row">
+<div class="g-column g-12-12 g-centered">
+<p> </p> <p>If you're wrangling multiple Git repositorites, you'll eventually want to move files from one to another. This tutorial will show you how you can move a full Git repository from one remote server to another. The steps below even allow you to choose which branches and tags to include.</p> <p>Let’s call the original repository ORI and the new one NEW, here are the steps required to copy everything from ORI to NEW:</p>
+<p>1. Create a local repository in the <strong>temp-dir</strong> directory using:</p>
+<div class="component component--codeblock">
+<pre><code>git&nbsp;clone&nbsp;&lt;url&nbsp;to&nbsp;ORI&nbsp;repo&gt;&nbsp;temp-dir</code></pre>
+</div>
+<script type="text/x-component">
+{
+"type":"imkt.components.CodeBlock",
+"params": {
+}
+}
+</script>
+<img src="https://wac-cdn.atlassian.com/dam/jcr:9fb5cea3-dcd6-4743-b847-a852a9683d47/clone-ori-repo.png?cdnVersion=578" loading="lazy" alt="clone ori repository">
+<p>2. Go into the temp-dir directory.</p> <p>3. To see a list of the different branches in ORI do:</p>
+<div class="component component--codeblock">
+<pre><code>git&nbsp;branch&nbsp;-a</code></pre>
+</div>
+<script type="text/x-component">
+{
+"type":"imkt.components.CodeBlock",
+"params": {
+}
+}
+</script>
+<img src="https://wac-cdn.atlassian.com/dam/jcr:38e6c2f1-cfc8-47a7-9391-66944c0eacdf/git-branch-a.png?cdnVersion=578" loading="lazy" alt="git branch-a">
+<p>4. Checkout all the branches that you want to copy from ORI to NEW using:</p>
+<div class="component component--codeblock">
+<pre><code>git&nbsp;checkout&nbsp;branch-name</code></pre>
+</div>
+<script type="text/x-component">
+{
+"type":"imkt.components.CodeBlock",
+"params": {
+}
+}
+</script>
+<img src="https://wac-cdn.atlassian.com/dam/jcr:f290a19a-3d8b-46ee-ad34-18269d659905/checkout-branches.png?cdnVersion=578" loading="lazy" alt="checkout-branches">
+<p>5. Now fetch all the tags from ORI using:</p>
+<div class="component component--codeblock">
+<pre><code>git&nbsp;fetch&nbsp;--tags</code></pre>
+</div>
+<script type="text/x-component">
+{
+"type":"imkt.components.CodeBlock",
+"params": {
+}
+}
+</script>
+<img src="https://wac-cdn.atlassian.com/dam/jcr:f933e76e-f773-4943-8bd2-935a696cea0d/git-fetch-tags.png?cdnVersion=578" loading="lazy" alt="git-fetch-tags">
+<p>6. Before doing the next step make sure to check your local tags and branches using the following commands:</p>
+<div class="component component--codeblock">
+<pre><code>git&nbsp;tag<br/>git&nbsp;branch&nbsp;-a</code></pre>
+</div>
+<script type="text/x-component">
+{
+"type":"imkt.components.CodeBlock",
+"params": {
+}
+}
+</script>
+<img src="https://wac-cdn.atlassian.com/dam/jcr:789cf04f-ed2c-4ef8-8299-138b460b9751/git-tag-and-git-branch-a.png?cdnVersion=578" loading="lazy" alt="git-tag-and-git-branch-a">
+<p>7. Now clear the link to the ORI repository with the following command:</p>
+<div class="component component--codeblock">
+<pre><code>git&nbsp;remote&nbsp;rm&nbsp;origin</code></pre>
+</div>
+<script type="text/x-component">
+{
+"type":"imkt.components.CodeBlock",
+"params": {
+}
+}
+</script>
+<p>8. Now link your local repository to your newly created NEW repository using the following command:</p>
+<div class="component component--codeblock">
+<pre><code>git&nbsp;remote&nbsp;add&nbsp;origin&nbsp;&lt;url&nbsp;to&nbsp;NEW&nbsp;repo&gt;</code></pre>
+</div>
+<script type="text/x-component">
+{
+"type":"imkt.components.CodeBlock",
+"params": {
+}
+}
+</script>
+<p>9. Now push all your branches and tags with these commands:</p>
+<div class="component component--codeblock">
+<pre><code>git&nbsp;push&nbsp;origin&nbsp;--all<br/>git&nbsp;push&nbsp;--tags<br/></code></pre>
+</div>
+<script type="text/x-component">
+{
+"type":"imkt.components.CodeBlock",
+"params": {
+}
+}
+</script>
+<img src="https://wac-cdn.atlassian.com/dam/jcr:2d1db8cb-7a28-46d0-8717-9afb0f1da244/end-result.png?cdnVersion=578" loading="lazy" alt="end-result">
+<p>10. You now have a full copy from your ORI repo.</p>
+<h3 > Extra
+</h3>
+<p>If you want to simply copy the entire repository you can use</p>
+<div class="component component--codeblock">
+<pre><code>git&nbsp;clone&nbsp;--mirror&nbsp;&lt;url&nbsp;to&nbsp;ORI&nbsp;repo&gt;&nbsp;temp-dir<br/></code></pre>
+</div>
+<script type="text/x-component">
+{
+"type":"imkt.components.CodeBlock",
+"params": {
+}
+}
+</script>
+<p>to replace step 1 to 5.</p>
+</div></div>
+<div id="related-post-sidebar" class="related-post">
+<div class="related-post--text">
+<p>Ready to learn Git?</p> <p>Try this interactive tutorial.</p>
+</div>
+<a href="/git/tutorials/learn-git-with-bitbucket-cloud" class="button green-solid standard related-post--link" >Get started now</a>
+</div>
+<div class="_footer">
+<div class="g-column g-6-12 g-centered">
+<div class="_hero">
+</div>
+<h5 > Next up:
+</h5>
+<h4 > Advanced Git Tutorials Overview
+</h4>
+<a href="/git/tutorials/advanced-overview" class="cms-link cms-link--text" >Start next tutorial</a>
+</div></div>
+</div>
+</div>
+<div id="footer" class="footer is-tutorial ">
+<div class="g-row _atlassian-logo">
+<div class="g-column g-12-12">
+<h5 > Powered By
+</h5>
+<a href="https://bitbucket.org" class="cms-link cms-link--image" ><img src="https://wac-cdn.atlassian.com/dam/jcr:c3392b46-dcac-4283-8855-dd8fda6918a0/Bitbucket-white.svg?cdnVersion=578" loading="lazy" alt="Atlassian"></a>
+</div></div>
+<div class="g-row">
+<div class="g-column g-4-12 t-12-12 m-12-12 t-gutterless">
+<h6 > Recommend
+</h6>
+<a href="https://twitter.com/home?status=Switching%20to%20%23Git?%20Use%20the%20Atlassian%20Git%20tutorials%20to%20jumpstart%20your%20training%20in%20Git%20commands%20and%20workflows.%20https://www.atlassian.com/git" class="cms-link cms-link--image social-code" ><img src="https://wac-cdn.atlassian.com/dam/jcr:69b49692-9452-4dd9-aca1-df56b2bbadbd/icon-twitter.svg?cdnVersion=578" loading="lazy" alt="Twitter"></a>
+<a href="https://www.facebook.com/sharer/sharer.php?u=https://www.atlassian.com/git" class="cms-link cms-link--image social-code" ><img src="https://wac-cdn.atlassian.com/dam/jcr:9c8da5cb-5272-4e89-9cc1-9a3f52265380/icon-facebook.svg?cdnVersion=578" loading="lazy" alt="Facebook"></a>
+<a href="https://plus.google.com/share?url=https://www.atlassian.com/git" class="cms-link cms-link--image social-code" ><img src="https://wac-cdn.atlassian.com/dam/jcr:3b592a98-07ca-48a6-8b95-e59eae543341/icon-gplus.svg?cdnVersion=578" loading="lazy" alt="GooglePlus"></a>
+</div><div class="g-column g-4-12 t-12-12 m-12-12 t-gutterless">
+<h6 > Want future articles?
+</h6>
+<form class="newsletter">
+<input class="is-empty _input" type="email" placeholder="Enter Your Email For Git News">
+<button type="submit" class="_status icon-email-submit">Submit</button>
+</form>
+</div><div class="g-column g-4-12 t-12-12 m-12-12 t-gutterless">
+<h6 > Site hosted by
+</h6>
+<a href="/" class="cms-link cms-link--image xx-active-parent-page-link" ><img src="https://wac-cdn.atlassian.com/dam/jcr:ffd56b30-ad4d-4cb5-94be-79c1dd68b1fb/Atlassian-horizontal-white-rgb.svg?cdnVersion=578" loading="lazy" alt="Bitbucket" class="_bitbucket-logo"></a>
+</div></div>
+<div class="g-row">
+<div class="g-column g-12-12 t-12-12 m-12-12">
+<p class="license"><a class="icon-global-cclicense" href="http://creativecommons.org/licenses/by/2.5/au/" data-event="clicked" data-uuid="028d468a-75" data-event-component="linkButton" data-event-container="richText" data-schema-version="1" data-product-key="bitbucket" data-event="clicked" data-uuid="028d468a-75" data-event-component="linkButton" data-event-container="richText" data-schema-version="1" data-product-key="bitbucket" rel="nofollow">creativecommons.org</a>Except where otherwise noted, all content is licensed under a <a href="http://creativecommons.org/licenses/by/2.5/au/" data-event="clicked" data-uuid="028d468a-75" data-event-component="linkButton" data-event-container="richText" data-schema-version="1" data-product-key="bitbucket" data-event="clicked" data-uuid="028d468a-75" data-event-component="linkButton" data-event-container="richText" data-schema-version="1" data-product-key="bitbucket" rel="nofollow">Creative Commons Attribution 2.5 Australia License</a>.</p> <style type="text/css">.tutorial-sidebar ._group > a:hover { color: #ccc !important; } .tutorial-sidebar ._group-wrap > a:hover, .tutorial-sidebar ._toc > a:hover { color: #fff; } </style>
+</div></div>
+</div>
+<script type="text/x-component">
+{
+"type":"imkt.components.PageLeaveTracking",
+"params": {
+}
+}
+</script>
+<script type="text/javascript">
+var HTTP_PREFIX = "";
+var FEATURE_FLAG_USE_GDPR = true;
+</script>
+<script type="text/javascript" src="https://wac-cdn.atlassian.com/static/master/2492/assets/build/js/gitguide/git-app-lite.js?cdnVersion=578"></script>
+<link rel="stylesheet" href="https://wac-cdn.atlassian.com/static/master/2492/assets/build/css/gitguide/site.css?cdnVersion=578" />
+<script type="text/javascript">
+(function(){
+var imkt = window.imkt = window.imkt || {};
+imkt.isEditMode = false;
+imkt.isProduction = true;
+imkt.constants = imkt.constants || {};
+imkt.constants.rootPath = "/";
+imkt.constants.assetPath = "https://wac-cdn.atlassian.com/static/master/2492" + "/assets/";
+imkt.constants.libPath = imkt.constants.assetPath + "bower_components/";
+imkt.constants.cdnVersionQuery = "?cdnVersion=578";
+imkt.constants.isDevUser = false;
+imkt.constants.isFreeEnabled = true;
+imkt.constants.getUserAccounts = false;
+imkt.constants.headerLoginMenu = true;
+imkt.constants.public = true;
+imkt.constants.mobileBreakpoint = 640;
+})();
+</script>
+<script type="text/x-component">
+{
+"type":"imkt.pages.WACPage",
+"params": {
+}
+}
+</script>
+<script>
+function initializeATLAnalytics() {
+var pageViewProperties = { contentSite: 'Git Microsite', contentType: 'Microsite', contentProduct: 'Bitbucket' };
+/* get url path, convert to dash format and add it to page view properties. */
+var originProduct = window.location.pathname;
+pageViewProperties.originProduct = "wac" + (originProduct === '/' ? "" : originProduct.replace(new RegExp('/', 'g'),"-"));
+if (typeof ace !== 'undefined') {
+ace.analytics.Initializer.initWithPageAnalytics('kiv6wyh2nw', pageViewProperties, null, null, window.atlGlobalLoadStart);
+}
+}
+</script>
+<script type = "text/javascript">
+/**
+* function to load external js through javascript.
+*
+* @param url - javascript url
+* @param location - location of the dom (e.g. document.head)
+*/
+var loadExternalJS = function(url, location, callback){
+var scriptTag = document.createElement('script');
+scriptTag.src = url;
+scriptTag.type = 'text/javascript';
+/* Then bind the event to the callback function.
+There are several events for cross browser compatibility. */
+scriptTag.onreadystatechange = callback;
+scriptTag.onload = callback;
+window.atlGlobalLoadStart = new Date();
+/* Fire the loading */
+location.appendChild(scriptTag);
+};
+</script>
+<script type="text/javascript" class="optanon-category-2">
+loadExternalJS("https://atl-global.atlassian.com/js/atl-global.min.js", document.body, initializeATLAnalytics);
+</script>
+</body>
+<!-- LastRendered: Oct 13, 2022 1:01:20 AM -->
+</html>
